@@ -1,4 +1,4 @@
-# CBF
+# PromptTemplate
 
 ## 에러 목록
 
@@ -14,7 +14,7 @@
 | INVALID_ACCESSOR | 빌드 | 잘못된 접근자 |
 | INVALID_OPERAND | 빌드 | 잘못된 피연산자 (LITERAL + PARAM 과 같은 형식에서 발생) |
 | MISSING_PARAM_TOKEN | 빌드 | CALL 연산에서 PARAM 토큰을 찾을 수 없음 |
-| INVALID_DIRECTIVE | 빌드 | 해석 할 수 없는 지시자 위치 (ex. IF없이 ENDIF가 나타는 것이 해당) |
+| INVALID_DIRECTIVE | 빌드 | 해석 할 수 없는 지시자 위치 (ex. IF없이 ENDIF가 나타나는 것이 해당) |
 | UNKNOWN_DIRECTIVE | 빌드 | 알 수 없는 지시자 |
 | INVALID_FRAGMENT | 빌드 | 잘못된 빌드 노드 타입 (TEXT, DIRECTIVE 또는 EXPRESSION이 아님) |
 | MISSING_ENDIF | 빌드 | ENDIF를 찾을 수 없음 |

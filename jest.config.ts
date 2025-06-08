@@ -7,6 +7,7 @@ module.exports = {
     moduleFileExtensions: ['ts', 'js'],
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
     moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
         '^assets/(.*)$': '<rootDir>/src/assets/$1',
         '^components/(.*)$': '<rootDir>/src/components/$1',
         '^context/(.*)$': '<rootDir>/src/context/$1',

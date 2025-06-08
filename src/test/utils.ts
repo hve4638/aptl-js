@@ -1,4 +1,4 @@
-import CBFParser from '../CBFParser';
+import PromptTemplate from '../PromptTemplate';
 import { CBFParserExecuteArgs } from '../types';
 
 export type PromptResult = {
@@ -6,11 +6,9 @@ export type PromptResult = {
     children: string[];
 };
 
-const parser = new CBFParser();
-
 export function buildPrompt(template:string, args:CBFParserExecuteArgs={ vars: {}, builtInVars: {}, hook: {} }):PromptResult[] {
-    const result = parser.build(template);
-    const gen = parser.execute(result.nodes, args);
+    const result = PromptTemplate.build(template);
+    const gen = PromptTemplate.execute(result.nodes, args);
 
     const results:PromptResult[] = [];
     for (const ele of gen) {

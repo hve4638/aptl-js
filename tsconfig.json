@@ -25,7 +25,11 @@
         "declarationDir": "./dist",
         "declarationMap": false,
 
-        "baseUrl" : "src"
+        "outDir" : "./dist",
+        "baseUrl": "./",
+        "paths": {
+          "@/*": ["src/*"]
+        }
     },
     "include": [
         "./src/**/*"

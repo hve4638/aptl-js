@@ -17,6 +17,7 @@ import {
 } from '../expr-parse/types/expressions';
 import { ExpressionArgs, ExpressionEventHooks, OPERATOR_HOOKS, Vars } from './types/expr-hooks';
 import { LITERAL_ACTIONS } from './literal-actions';
+import PromptGenerator from '../PromptGenerator';
 
 class Evaluator {
     #vars:Vars;
@@ -38,9 +39,41 @@ class Evaluator {
         return this.#getRawValue(expr);
     }
 
+    /**
+     * expressionAST:EvaluatableExpression
+     */
+    evaluateOutput(expressionAST:EvaluatableExpression):string|PromptGenerator {
+        const expr = this.#evaluateExpr(expressionAST) as EvaluatableExpression;
+
+        if (expr.type === ExpressionType.OBJECT
+        && expr.value instanceof PromptGenerator) {
+            return expr.value;
+        }
+
+        return this.#stringifyExpr(expr);
+    }
+
     evaluateAndStringify(expressionAST:EvaluatableExpression):string {
         const expr = this.#evaluateExpr(expressionAST) as EvaluatableExpression;
 
+        if (this.#isLiteral(expr)) {
+            return expr.value.toString();
+        }
+        else {
+            const item = this.#getRawValue(expr);
+            
+            const hookName = OPERATOR_HOOKS.STRINGIFY;
+            const hook = this.#expressionEventHooks[hookName];
+            if (hook) {
+                return hook(item);
+            }
+            else {
+                throw new NoHookError(hookName, expr);
+            }
+        }
+    }
+
+    #stringifyExpr(expr:EvaluatableExpression):string {
         if (this.#isLiteral(expr)) {
             return expr.value.toString();
         }

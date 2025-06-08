@@ -9,7 +9,7 @@ describe('NodeBuilder', () => {
     const splitter = new TemplateSplitter();
     const builder = new NodeBuilder();
     function build(text:string) {
-        const fragments = splitter.spliteTemplate(text);
+        const fragments = splitter.splitTemplate(text);
         return builder.build(fragments).nodes;
     }
 

@@ -61,13 +61,13 @@ describe('SyntaxTransform Test', () => {
         )
     });
     
-    test('MISSING_CLOSE_PAREN', ()=>{
+    test('MISSING_CLOSE_INDEXOR', ()=>{
         const expressionText = '[a + b';
 
         const e = getThrownError(()=>generateTransformedTokens(expressionText));
         expectCBFFail(
             e,
-            CBFErrorType.MISSING_CLOSE_PAREN,
+            CBFErrorType.MISSING_CLOSE_INDEXOR,
             {
                 text: '[',
                 positionBegin: 0,

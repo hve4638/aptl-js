@@ -34,7 +34,7 @@ class NodeBuilder {
             ),
         };
     }
-
+    
     build(fragments: Fragment[]): {nodes: CBFNode[], errors: CBFFail[]} {
         this.#nodes = [];
         this.#errors = [];

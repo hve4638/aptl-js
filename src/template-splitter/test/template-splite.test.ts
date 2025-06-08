@@ -6,7 +6,7 @@ describe('TemplateSplite', () => {
 
     test('text', () => {
         const template = 'hello world';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected = [
             {
                 type: FragmentType.TEXT,
@@ -20,7 +20,7 @@ describe('TemplateSplite', () => {
 
     test('text (trimmed)', () => {
         const template = '   hello world   ';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected = [
             {
                 type: FragmentType.TEXT,
@@ -34,7 +34,7 @@ describe('TemplateSplite', () => {
 
     test('directive', () => {
         const template = '{{:: ROLE user}}';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected:Fragment[] = [
             {
                 type: FragmentType.DIRECTIVE,
@@ -52,7 +52,7 @@ describe('TemplateSplite', () => {
 
     test('directive : endif', () => {
         const template = '{{::ENDIF}}';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected:Fragment[] = [
             {
                 type: FragmentType.DIRECTIVE,
@@ -70,7 +70,7 @@ describe('TemplateSplite', () => {
 
     test('allow invalid directive', () => {
         const template = '{{::TEST_INVALID}}';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected:Fragment[] = [
             {
                 type: FragmentType.DIRECTIVE,
@@ -88,7 +88,7 @@ describe('TemplateSplite', () => {
 
     test('expression', () => {
         const template = '{{ 1 + 2 * 3 }}';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected:Fragment[] = [
             {
                 type: FragmentType.EXPRESSION,
@@ -104,7 +104,7 @@ describe('TemplateSplite', () => {
 
     test('mixed', () => {
         const template = '{{:: ROLE user}} hello {{ num }}';
-        const actual = splitter.spliteTemplate(template);
+        const actual = splitter.splitTemplate(template);
         const expected:Fragment[] = [
             {
                 type: FragmentType.DIRECTIVE,

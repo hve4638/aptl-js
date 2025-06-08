@@ -1,3 +1,4 @@
+import { FragmentType } from "@/types";
 import { EvaluatableExpression } from "../expr-parse";
 import { CBFNode, NodeType, ActionType } from "../types/node";
 
@@ -8,45 +9,55 @@ export const ActionTemplate = {
             type: ActionType.ENTER_SCOPE,
         };
     },
-    exitScope() {
+    exitScope():CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.EXIT_SCOPE,
         };
     },
-    jump(jumpTo:number) {
+    jump(jumpTo:number):CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.JUMP,
             jump_to: jumpTo,
         };
     },
-    break() {
+    break():CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.BREAK,
         };
     },
-    jumpConditional(expression, jumpTo) {
+    jumpConditional(expression:EvaluatableExpression, jumpTo:number):CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.CONDITIONAL_JUMP,
-            fragment: expect.anything(),
+            fragment: {
+                type : FragmentType.TEXT,
+                position : expression.position,
+                size : expression.size,
+                full_text : expression.value,
+            },
             expression: expression,
             not: false,
             jump_to: jumpTo,
         };
     },
-    iterateInit(expr:EvaluatableExpression, iterator_variable:string) {
+    iterateInit(expression:EvaluatableExpression, iterator_variable:string):CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.ITERATE_INIT,
-            fragment: expect.anything(),
-            expression: expr,
+            fragment: {
+                type : FragmentType.TEXT,
+                position : expression.position,
+                size : expression.size,
+                full_text : expression.value,
+            },
+            expression: expression,
             iterator_variable: iterator_variable,
         };
     },
-    iterateNext(iterate_variable:string, result_variable:string) {
+    iterateNext(iterate_variable:string, result_variable:string):CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.ITERATE_NEXT,
@@ -54,7 +65,7 @@ export const ActionTemplate = {
             result_variable : result_variable,
         };
     },
-    jumpIfIterateDone(iterator_variable:string, jumpTo:number) {
+    jumpIfIterateDone(iterator_variable:string, jumpTo:number):CBFNode {
         return {
             node_type: NodeType.ACTION,
             type: ActionType.JUMP_IF_ITERATE_DONE,

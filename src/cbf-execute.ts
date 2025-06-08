@@ -172,10 +172,18 @@ export function* execute(nodes:CBFNode[], executeArgs:CBFParserExecuteArgs):Gene
             }
             else if (node.type === FragmentType.EXPRESSION) {
                 const evaluator = getEvaluator();
-                const text = evaluator.evaluateAndStringify(node.expression);
-                yield {
-                    type : 'TEXT',
-                    text : text,
+                const output = evaluator.evaluateOutput(node.expression);
+
+                if (typeof output === 'string') {
+                    yield {
+                        type : 'TEXT',
+                        text : output,
+                    }
+                }
+                else {
+                    for (const result of output) {
+                        yield result;
+                    }
                 }
             }
             else if (node.type === FragmentType.TEXT) {
@@ -189,3 +197,5 @@ export function* execute(nodes:CBFNode[], executeArgs:CBFParserExecuteArgs):Gene
         nextOffset();
     }
 }
+
+export default execute;

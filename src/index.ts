@@ -1,5 +1,6 @@
-export { default as CBFParser }  from './CBFParser';
+export { default as PromptTemplate } from './PromptTemplate';
 export { CBFFail } from './errors';
-export { type CBFErrorType } from './types';
+export { default as PromptGenerator } from './PromptGenerator';
 
-// export default CBFParser;
+export { type CBFErrorType } from './types';
+export type { CBFNode, CBFResult, CBFParserExecuteArgs } from './types';

@@ -23,6 +23,9 @@ const hook = {
     }
 }
 
+/**
+ * 
+ */
 describe('CbfParser', () => {
     test('text', () => {
         const text = 'text1';

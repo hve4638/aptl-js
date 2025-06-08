@@ -19,7 +19,7 @@ type Hint = {
 class TemplateSplitter {
     #fragments:FragmentAdder = new FragmentAdder();
     
-    spliteTemplate(template: string):Fragment[] {
+    splitTemplate(template: string):Fragment[] {
         this.#fragments = new FragmentAdder();
 
         let position = 0;
