@@ -8,7 +8,14 @@ export type CBFResult = {
     role : string;
 } | {
     type : 'IMAGE';
-    src : string;
+    filename: string;
+    data : string;
+    dataType: 'image/png' | 'image/jpeg' | 'image/webp';
+} | {
+    type : 'FILE';
+    filename: string;
+    data : string;
+    dataType: 'application/pdf' | 'text/plain';
 } | {
     type : 'SPLIT';
 }
