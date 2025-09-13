@@ -1,3 +1,0 @@
-export {
-    InternalError,
-} from './internal';

@@ -1,42 +1,55 @@
-export const FragmentType = {
-    TEXT : 'TEXT',
-    DIRECTIVE : 'DIRECTIVE',
-    EXPRESSION : 'EXPRESSION',
-} as const;
-export type FragmentType = typeof FragmentType[keyof typeof FragmentType];
+interface BaseFragment {
+    type: 'text-content' | 'expression-element' | 'directive-element';
+    value: string;
+    position: number;
+}
+
+export interface TextContentFragment extends BaseFragment {
+    type: 'text-content';
+}
+
+export interface ExpressionFragment extends BaseFragment {
+    type: 'expression-element';
+
+    expression: {
+        text: string;
+        prefix: string;
+        suffix: string;
+
+        position: number;
+    };
+}
+
+export interface DirectiveFragment extends BaseFragment {
+    type: 'directive-element';
+
+    directive: {
+        text: string;
+        prefix: string;
+        suffix: string;
+
+        position: number;
+    };
+    field: {
+        text: string;
+        prefix: string;
+        suffix: string;
+
+        position: number;
+    };
+}
+
+export type Fragment = TextContentFragment | ExpressionFragment | DirectiveFragment;
 
 export const DirectiveKeywords = {
-    ROLE : 'ROLE',
-    IF : 'IF',
-    ELSEIF : 'ELSEIF',
-    ELIF : 'ELIF',
-    ELSE : 'ELSE',
-    ENDIF : 'ENDIF',
-    FOREACH : 'FOREACH',
-    ENDFOREACH : 'ENDFOREACH',
-    SPLIT : 'SPLIT',
+    Role: 'role',
+    If: 'if',
+    ElseIf: 'elseif',
+    Elif: 'elif',
+    Else: 'else',
+    EndIf: 'endif',
+    Foreach: 'foreach',
+    EndForeach: 'endforeach',
+    Split: 'split',
 } as const;
 export type DirectiveKeywords = typeof DirectiveKeywords[keyof typeof DirectiveKeywords];
-
-type FragmentRequired = {
-    position : number;
-    size : number;
-    full_text : string;
-}
-export type Fragment = ExpressionFragment | DirectiveFragment | TextFragment;
-
-export type ExpressionFragment = FragmentRequired &{
-    type : typeof FragmentType.EXPRESSION;
-    expression_text : string;
-    expression_text_left : string;
-}
-export type DirectiveFragment = FragmentRequired & {
-    type : typeof FragmentType.DIRECTIVE;
-    keyword : string; // DirectiveKeywords 만 올 수 있으나, 중간 과정(TemplateSplitter)까지는 유효성 검사를 하지 않음
-    field : string;
-    keyword_left : string;
-    field_left : string;
-}
-export type TextFragment = FragmentRequired & {
-    type : typeof FragmentType.TEXT;
-}
