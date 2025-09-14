@@ -1,4 +1,4 @@
-import { APTLFail } from '@/errors';
+import { BuildError, FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import {
     RawToken,
@@ -33,13 +33,15 @@ class ExpressionTokenizer {
                 if (match) {
                     const text = match[0];
 
-                    throw new APTLFail(
+                    throw new BuildError(
                         'Invalid token',
-                        APTLErrorType.INVALID_TOKEN,
                         {
+                            error_type: APTLErrorType.INVALID_TOKEN,
+                            position: {
+                                begin: position,
+                                end: position + text.length,
+                            },
                             text,
-                            positionBegin: position,
-                            positionEnd: position + text.length,
                         }
                     );
                 }
@@ -67,13 +69,15 @@ class ExpressionTokenizer {
             if (!match) {
                 const text = expressionText[position];
 
-                throw new APTLFail(
+                throw new BuildError(
                     'Invalid token',
-                    APTLErrorType.INVALID_TOKEN,
                     {
+                        error_type: APTLErrorType.INVALID_TOKEN,
                         text,
-                        positionBegin: position,
-                        positionEnd: position + text.length,
+                        position: {
+                            begin: position,
+                            end: position + text.length,
+                        },
                     }
                 );
             }

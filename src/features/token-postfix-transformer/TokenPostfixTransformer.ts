@@ -1,4 +1,4 @@
-import { APTLFail, InternalError } from '@/errors';
+import { BuildError, InternalError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import type { RawToken } from '@/types/raw-token';
 import type { Token } from '@/types/token';
@@ -84,16 +84,18 @@ class TokenPostfixTransformer {
                 }
             }
             catch (e: unknown) {
-                if (e instanceof APTLFail) {
+                if (e instanceof InternalError) {
                     const text = token.value;
 
-                    throw new APTLFail(
+                    throw new BuildError(
                         e.message,
-                        e.type,
                         {
+                            error_type: e.type,
+                            position: {
+                                begin: position,
+                                end: position + text.length,
+                            },
                             text,
-                            positionBegin: position,
-                            positionEnd: position + text.length,
                         }
                     );
                 }

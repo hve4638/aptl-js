@@ -40,12 +40,14 @@ class Evaluator {
 
         return this.#getRawValue(expr);
     }
-    
+
     evaluateOutput(expressionAST: EvaluatableExpression): string | PromptGenerator {
         const expr = this.#evaluateExpr(expressionAST) as EvaluatableExpression;
 
-        if (expr.type === ExpressionType.OBJECT
-            && expr.value instanceof PromptGenerator) {
+        if (
+            expr.type === ExpressionType.OBJECT
+            && expr.value instanceof PromptGenerator
+        ) {
             return expr.value;
         }
 

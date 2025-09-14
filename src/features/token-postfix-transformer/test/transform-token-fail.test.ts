@@ -1,4 +1,4 @@
-import { expectCBFFail, getThrownError } from '@/test';
+import { expectAPTLFail, getThrownError } from '@/test';
 import { APTLErrorType } from '@/errors';
 
 import {
@@ -18,13 +18,15 @@ describe('SyntaxTransform Test', () => {
             tokenizeAndTrasfrom(expressionText);
         }
         catch (e: any) {
-            expectCBFFail(
+            expectAPTLFail(
                 e,
-                APTLErrorType.MULTIPLE_EXPRESSION,
                 {
+                    error_type: APTLErrorType.MULTIPLE_EXPRESSION,
                     text: ',',
-                    positionBegin: 2,
-                    positionEnd: 3,
+                    position: {
+                        begin: 2,
+                        end: 3,
+                    }
                 }
             );
         }
@@ -38,13 +40,15 @@ describe('SyntaxTransform Test', () => {
         const expressionText = 'a + b)';
 
         const e = getThrownError(()=>tokenizeAndTrasfrom(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.MISSING_OPEN_PAREN,
             {
+                error_type: APTLErrorType.MISSING_OPEN_PAREN,
                 text: ')',
-                positionBegin: 5,
-                positionEnd: 6,
+                position: {
+                    begin: 5,
+                    end: 6,
+                }
             }
         )
     });
@@ -53,13 +57,15 @@ describe('SyntaxTransform Test', () => {
         const expressionText = 'a + b]';
 
         const e = getThrownError(()=>tokenizeAndTrasfrom(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.MISSING_OPEN_INDEXOR,
             {
+                error_type: APTLErrorType.MISSING_OPEN_INDEXOR,
                 text: ']',
-                positionBegin: 5,
-                positionEnd: 6,
+                position: {
+                    begin: 5,
+                    end: 6,
+                }
             }
         )
     });
@@ -69,13 +75,15 @@ describe('SyntaxTransform Test', () => {
         const expressionText = '[a + b';
 
         const e = getThrownError(()=>tokenizeAndTrasfrom(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.MISSING_CLOSE_INDEXOR,
             {
+                error_type: APTLErrorType.MISSING_CLOSE_INDEXOR,
                 text: '[',
-                positionBegin: 0,
-                positionEnd: 1,
+                position: {
+                    begin: 0,
+                    end: 1,
+                }
             }
         );
     });
@@ -85,13 +93,15 @@ describe('SyntaxTransform Test', () => {
         const expressionText = '(a + b';
 
         const e = getThrownError(()=>tokenizeAndTrasfrom(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.MISSING_CLOSE_PAREN,
             {
+                error_type: APTLErrorType.MISSING_CLOSE_PAREN,
                 text: '(',
-                positionBegin: 0,
-                positionEnd: 1,
+                position: {
+                    begin: 0,
+                    end: 1,
+                },
             }
         );
     });

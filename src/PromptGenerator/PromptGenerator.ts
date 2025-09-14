@@ -1,7 +1,7 @@
-import { TemplateResult } from './types';
+import type{ TemplateOutput } from '@/types';
 
 class PromptGenerator {
-    constructor(private generator:()=>Generator<TemplateResult>) {
+    constructor(private generator:()=>Generator<TemplateOutput>) {
 
     }
 

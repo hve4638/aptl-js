@@ -1,7 +1,7 @@
 import { DirectiveFragment, DirectiveKeywords, Fragment } from '@/types/fragment';
 import { APTLInstruction, GroupInstruction, InstructionType } from '@/types/instruction';
 import { IInstructionBuilder } from './interfaces';
-import { APTLBuildError } from '@/errors';
+import { FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import ActionTemplate from './ActionTemplate';
 import { DirectiveHandlers } from './types';
@@ -48,8 +48,8 @@ class IfSequenceBuilder {
         while (!this.#exitSignal) {
             const { value: fragment, done } = this.#fragmentGen.next();
             if (done) {
-                throw new APTLBuildError(
-                    `missing 'endif' directive`,
+                throw new FragmentError(
+                    `missing '#endif' directive`,
                     APTLErrorType.MISSING_ENDIF,
                     fragment
                 );
@@ -126,7 +126,7 @@ class IfSequenceBuilder {
 
     #handleElseIf(fragment: DirectiveFragment) {
         if (this.#elseCondition) {
-            throw new APTLBuildError(
+            throw new FragmentError(
                 `Unexpected '${fragment.directive}' directive after 'else' directive`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 fragment
@@ -140,7 +140,7 @@ class IfSequenceBuilder {
 
     #handleElse(fragment: DirectiveFragment) {
         if (this.#elseCondition) {
-            throw new APTLBuildError(
+            throw new FragmentError(
                 'Duplicate else directive',
                 APTLErrorType.DUPLICATE_ELSE_DIRECTIVE,
                 fragment

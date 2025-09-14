@@ -1,4 +1,4 @@
-import { APTLFail } from '@/errors';
+import { BuildError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import {
     Token,
@@ -55,12 +55,14 @@ class ASTParser {
             return this.#output[0] as EvaluatableExpression;
         }
         else if (this.#output.length === 0) {
-            throw new APTLFail(
+            throw new BuildError(
                 'empty expression',
-                APTLErrorType.NO_EXPRESSION,
                 {
-                    positionBegin: 0,
-                    positionEnd: 0,
+                    error_type: APTLErrorType.NO_EXPRESSION,
+                    position: {
+                        begin: 0,
+                        end: 0,
+                    },
                     text: '',
                 }
             );
@@ -68,12 +70,14 @@ class ASTParser {
         else {
             // 여러 표현식 리턴시 이곳에 도달
             // 정상적인 입력의 경우 이곳에 도달하지 않음
-            throw new APTLFail(
+            throw new BuildError(
                 'unprocessed expression remaining',
-                APTLErrorType.UNPROCESSED_EXPRESSION_REMAIN,
                 {
-                    positionBegin: 0,
-                    positionEnd: 0,
+                    error_type: APTLErrorType.UNPROCESSED_EXPRESSION_REMAIN,
+                    position: {
+                        begin: 0,
+                        end: 0,
+                    },
                     text: '',
                 }
             );
@@ -88,13 +92,15 @@ class ASTParser {
         const operand1 = this.#output.pop() as EvaluatableExpression;
 
         if (operand1 == null || operand2 == null) {
-            throw new APTLFail(
+            throw new BuildError(
                 `Invalid formula : missing operand`,
-                APTLErrorType.INVALID_FORMULA,
                 {
+                    error_type: APTLErrorType.INVALID_FORMULA,
                     text: token.value,
-                    positionBegin: token.position,
-                    positionEnd: token.position + token.size,
+                    position: {
+                        begin: token.position,
+                        end: token.position + token.size,
+                    },
                 }
             );
         }
@@ -102,13 +108,15 @@ class ASTParser {
             // 1 + (1,2) 의 형태일 경우
             // 이전 token-postfix-transformer 단계에서 '(1, 2)' 과 같은 식을 허용하지 않으므로
             // 정상 흐름에서 발생하지 않음
-            throw new APTLFail(
+            throw new BuildError(
                 `Invalid operand : right operand is param`,
-                APTLErrorType.INVALID_OPERAND,
                 {
-                    positionBegin: operand2.position || 0,
-                    positionEnd: (operand2.position || 0) + (operand2.size || 0),
+                    error_type: APTLErrorType.INVALID_OPERAND,
                     text: '',
+                    position: {
+                        begin: operand2.position || 0,
+                        end: (operand2.position || 0) + (operand2.size || 0),
+                    },
                 }
             );
         }
@@ -125,14 +133,17 @@ class ASTParser {
                 } as LiteralExpression;
             }
             else {
-                throw new APTLFail(
+                throw new BuildError(
                     `right operand '${operand2.value}' is not identifier`,
-                    APTLErrorType.INVALID_ACCESSOR,
                     {
-                        positionBegin: token.position,
-                        positionEnd: token.position + token.size,
+                        error_type: APTLErrorType.INVALID_ACCESSOR,
                         text: token.value,
-                    });
+                        position: {
+                            begin: token.position,
+                            end: token.position + token.size,
+                        }
+                    }
+                );
             }
         }
 
@@ -168,13 +179,15 @@ class ASTParser {
             // PARAM 토큰 누락시
             // 정상 흐름(tokenize -> transfromToken)을 통해 전달된 입력을 통해서는 발생하지 않음
 
-            throw new APTLFail(
+            throw new BuildError(
                 'Missing PARAM token',
-                APTLErrorType.MISSING_PARAM_TOKEN,
                 {
+                    error_type: APTLErrorType.MISSING_PARAM_TOKEN,
                     text: token.value,
-                    positionBegin: token.position,
-                    positionEnd: token.position + token.size,
+                    position: {
+                        begin: token.position,
+                        end: token.position + token.size,
+                    },
                 }
             );
         }

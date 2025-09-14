@@ -1,17 +1,21 @@
-import { APTLFail } from '@/errors';
+import { BuildError } from '@/errors';
 import Fragmenter from '@/features/fragmenter';
 import { ForeachSequenceBuilder, IfSequenceBuilder, InstructionBuilder } from '@/features/instruction-builder';
-import { CompileResult } from '@/types/compile';
+import { CompileOutput } from '@/types/compile';
+import { CompileFailReason } from '@/types/fail';
 
 import { DirectiveKeywords, Fragment } from '@/types/fragment';
 import { APTLInstruction } from '@/types/instruction';
 
 class Compiler {
-    #instructionBuilder: InstructionBuilder;
+    static #initialized = false;
+    static #instructionBuilder: InstructionBuilder;
 
-    constructor() {
+    static #init() {
+        if (this.#initialized) return;
+        this.#initialized = true;
+
         this.#instructionBuilder = new InstructionBuilder();
-
         this.#instructionBuilder.updateDirectiveHandlers({
             [DirectiveKeywords.If]: (c, gen) => {
                 const ifSeqBuilder = new IfSequenceBuilder(c, gen, this.#instructionBuilder);
@@ -24,18 +28,21 @@ class Compiler {
         });
     }
 
-    compile(text: string): CompileResult {
+    static compile(text: string): CompileOutput {
+        this.#init();
         const fragments = this.fragment(text);
         const insts = this.build(fragments);
 
         return insts;
     }
 
-    fragment(text: string): Fragment[] {
+    static fragment(text: string): Fragment[] {
         return Fragmenter.fragment(text);
     }
 
-    build(fragments: Fragment[]): CompileResult {
+    static build(fragments: Fragment[]): CompileOutput {
+        Compiler.#init();
+
         function* genFragment(frags: Fragment[]) {
             for (const frag of frags) {
                 yield frag;
@@ -43,25 +50,24 @@ class Compiler {
         }
         const gen = genFragment(fragments)
 
-        const errors: APTLFail[] = [];
+        const errors: CompileFailReason[] = [];
         const instructions: APTLInstruction[] = [];
         while (true) {
             const { value: fragment, done } = gen.next();
             if (done) break;
 
             try {
-                const inst = this.#instructionBuilder.build(fragment, gen, {});
+                const inst = Compiler.#instructionBuilder.build(fragment, gen, {});
                 if (inst) instructions.push(inst);
             }
             catch (error) {
-                if (error instanceof APTLFail) {
-                    errors.push(error);
+                if (error instanceof BuildError) {
+                    errors.push(error.reason);
                 }
                 else {
                     throw error;
                 }
             }
-
         }
 
         if (errors.length > 0) {

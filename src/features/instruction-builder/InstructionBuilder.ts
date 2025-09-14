@@ -3,9 +3,8 @@ import { APTLInstruction, DirectiveInstructions } from '@/types/instruction';
 import { InstructionCmd, InstructionType } from '@/types/instruction/base';
 import type { BuildOption, DirectiveHandlers } from './types';
 import type { IInstructionBuilder } from './interfaces';
-import { APTLErrorType } from '@/errors';
+import { APTLErrorType, FragmentError } from '@/errors';
 import ExpressionBuilder from './ExpressionBuilder';
-import { APTLBuildError } from '@/errors';
 
 class InstructionBuilder implements IInstructionBuilder {
     #directiveHandler: DirectiveHandlers = {
@@ -79,7 +78,7 @@ class InstructionBuilder implements IInstructionBuilder {
             return parser(current, gen);
         }
         else {
-            throw new APTLBuildError(
+            throw new FragmentError(
                 `Invalid directive '${keyword}'`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 current
@@ -109,7 +108,7 @@ class InstructionBuilder implements IInstructionBuilder {
                 };
                 break;
             default:
-                throw new APTLBuildError(
+                throw new FragmentError(
                     `Unsupported directive: ${directive}`,
                     APTLErrorType.INVALID_DIRECTIVE,
                     fragment

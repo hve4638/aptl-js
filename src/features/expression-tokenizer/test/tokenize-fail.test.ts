@@ -1,18 +1,20 @@
 import ExpressionTokenizer from '../';
 import { APTLErrorType } from '@/errors';
-import { expectCBFFail, getThrownError } from '@/test';
+import { expectAPTLFail, getThrownError } from '@/test';
 
 describe('Expression Tokenizer Error Test', () => {
     test('INVALID_TOKEN : invalid identifier', () => {
         const expressionText = '1a';
         const e = getThrownError(() => ExpressionTokenizer.tokenizeRaw(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.INVALID_TOKEN,
             {
+                error_type: APTLErrorType.INVALID_TOKEN,
                 text: '1a',
-                positionBegin: 0,
-                positionEnd: 2,
+                position: {
+                    begin: 0,
+                    end: 2,
+                }
             }
         );
     });
@@ -23,13 +25,15 @@ describe('Expression Tokenizer Error Test', () => {
             ExpressionTokenizer.tokenizeRaw(expressionText); // expected error
         }
         catch (e: any) {
-            expectCBFFail(
+            expectAPTLFail(
                 e,
-                APTLErrorType.INVALID_TOKEN,
                 {
+                    error_type: APTLErrorType.INVALID_TOKEN,
                     text: '@',
-                    positionBegin: 2,
-                    positionEnd: 3,
+                    position: {
+                        begin: 2,
+                        end: 3,
+                    }
                 }
             );
             return;

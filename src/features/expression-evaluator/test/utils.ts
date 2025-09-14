@@ -1,4 +1,4 @@
-import { APTLFail, APTLFailHint } from '@/errors';
+import { BuildError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import Evaluator from '../Evaluator';
 
@@ -40,27 +40,4 @@ export function getThrownError(callback: () => any) {
         return error;
     }
     throw new Error('Expected error but no error was thrown');
-}
-
-export function expectCBFFail(
-    actualError: unknown,
-    failType: APTLErrorType,
-    hint: APTLFailHint
-) {
-    expect(actualError).toBeInstanceOf(APTLFail);
-    if (actualError instanceof APTLFail) {
-        const actual = {
-            text: actualError.text,
-            type: actualError.type,
-            positionBegin: actualError.positionBegin,
-            positionEnd: actualError.positionEnd,
-        }
-        const expected = {
-            type: failType,
-            text: hint.text,
-            positionBegin: hint.positionBegin,
-            positionEnd: hint.positionEnd,
-        }
-        expect(actual).toEqual(expected);
-    }
 }

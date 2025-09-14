@@ -1,4 +1,4 @@
-export type TemplateResult = {
+export type TemplateOutput = {
     type: 'TEXT';
     text: string;
 } | {

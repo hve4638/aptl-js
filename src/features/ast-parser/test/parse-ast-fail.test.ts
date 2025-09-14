@@ -1,5 +1,5 @@
 import { APTLErrorType } from '@/errors';
-import { expectCBFFail, getThrownError } from '@/test';
+import { expectAPTLFail, getThrownError } from '@/test';
 import { generateAST } from './utils';
 
 /*
@@ -15,39 +15,45 @@ describe('ParseAST Fail', () => {
     test('NO_EXPRESSION', () => {
         const expressionText = '';
         const e = getThrownError(() => generateAST(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.NO_EXPRESSION,
             {
+                error_type: APTLErrorType.NO_EXPRESSION,
                 text: '',
-                positionBegin: 0,
-                positionEnd: 0,
+                position: {
+                    begin: 0,
+                    end: 0,
+                },
             }
         );
     });
     test('INVALID_FORMULA', () => {
         const expressionText = '1 - ';
         const e = getThrownError(() => generateAST(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.INVALID_FORMULA,
             {
+                error_type: APTLErrorType.INVALID_FORMULA,
                 text: '-',
-                positionBegin: 2,
-                positionEnd: 3,
+                position: {
+                    begin: 2,
+                    end: 3,
+                },
             }
         );
     });
     test('INVALID_ACCESSOR', () => {
         const expressionText = 'data.1';
         const e = getThrownError(() => generateAST(expressionText));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.INVALID_ACCESSOR,
             {
+                error_type: APTLErrorType.INVALID_ACCESSOR,
                 text: '.',
-                positionBegin: 4,
-                positionEnd: 5,
+                position: {
+                    begin: 4,
+                    end: 5,
+                }
             }
         );
     });

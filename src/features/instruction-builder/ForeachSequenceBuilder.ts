@@ -1,7 +1,7 @@
 import { DirectiveFragment, DirectiveKeywords, Fragment } from '@/types/fragment';
 import { APTLInstruction, GroupInstruction, InstructionType } from '@/types/instruction';
 import { IInstructionBuilder } from './interfaces';
-import { APTLBuildError } from '@/errors';
+import { FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
 import ActionTemplate from './ActionTemplate';
 import ExpressionBuilder from './ExpressionBuilder';
@@ -49,7 +49,7 @@ class ForeachSequenceBuilder {
         while (!this.#exitSignal) {
             const { value: fragment, done } = this.#fragmentGen.next();
             if (done) {
-                throw new APTLBuildError(
+                throw new FragmentError(
                     `missing #endforeach`,
                     APTLErrorType.MISSING_ENDFOREACH,
                     fragment
@@ -92,7 +92,7 @@ class ForeachSequenceBuilder {
         const elementExpr = ExpressionBuilder.build(element.text, { position: element.position });
 
         if (elementExpr.type !== 'identifier') {
-            throw new APTLBuildError(
+            throw new FragmentError(
                 `'${element.text}' is not a valid identifier`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 this.#current
@@ -122,7 +122,7 @@ class ForeachSequenceBuilder {
             position: field.position,
         }, delimiter);
         if (splitted.length !== 2) {
-            throw new APTLBuildError(
+            throw new FragmentError(
                 `Invalid foreach directive field. Expected '<element> ${delimiter} <iterator>'`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 this.#current

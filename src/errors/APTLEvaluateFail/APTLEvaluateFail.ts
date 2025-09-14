@@ -1,10 +1,10 @@
-import APTLFail from '../APTLFail';
+import BuildError from '../BuildError';
 import { APTLErrorType } from '@/errors';
 import { AnyExpression, ParamExpression } from '@/types/expressions';
 
 export type FailExpression = Exclude<AnyExpression, ParamExpression>;
 
-class APTLEvaluateFail extends APTLFail {
+class APTLEvaluateFail extends BuildError {
     constructor(message: string, type:APTLErrorType, expr: FailExpression) {
         let text:string;
         try {
@@ -14,10 +14,13 @@ class APTLEvaluateFail extends APTLFail {
             text = 'UNKNOWN';
         }
 
-        super(message, type, {
+        super(message, {
+            error_type: type,
             text : text,
-            positionBegin : expr.position,
-            positionEnd : expr.position + expr.size,
+            position: {
+                begin: expr.position,
+                end: expr.position + expr.size,
+            },
         });
         this.name = 'APTLEvaluateFail';
     }

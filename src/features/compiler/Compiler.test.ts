@@ -2,16 +2,10 @@ import Compiler from './Compiler';
 import { InstructionType, InstructionCmd } from '@/types/instruction';
 
 describe('Compiler', () => {
-    let compiler: Compiler;
-
-    beforeEach(() => {
-        compiler = new Compiler();
-    });
-
     describe('compile', () => {
         test('순수 텍스트 템플릿 컴파일', () => {
             const template = 'Hello, world!';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(1);
             expect(instructions[0]).toMatchObject({
@@ -23,7 +17,7 @@ describe('Compiler', () => {
 
         test('단일 expression 템플릿 컴파일', () => {
             const template = '{{name}}';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(1);
             expect(instructions[0]).toMatchObject({
@@ -34,7 +28,7 @@ describe('Compiler', () => {
 
         test('혼합 템플릿 컴파일', () => {
             const template = 'Hello {{name}}, welcome!';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(3);
             expect(instructions[0]).toMatchObject({
@@ -55,7 +49,7 @@ describe('Compiler', () => {
 
         test('if 디렉티브가 포함된 템플릿 컴파일', () => {
             const template = '{{#if condition}}Show this{{#endif}}';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(1);
             expect(instructions[0]).toMatchObject({
@@ -65,7 +59,7 @@ describe('Compiler', () => {
 
         test('foreach 디렉티브가 포함된 템플릿 컴파일', () => {
             const template = '{{#foreach item in items}}{{item}}{{#endforeach}}';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(1);
             expect(instructions[0]).toMatchObject({
@@ -84,7 +78,7 @@ describe('Compiler', () => {
             {{#endif}}
             Thank you!
             `;
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions.length).toBeGreaterThan(0);
 
@@ -94,14 +88,14 @@ describe('Compiler', () => {
 
         test('빈 템플릿 컴파일', () => {
             const template = '';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(0);
         });
 
         test('공백만 있는 템플릿 컴파일', () => {
             const template = '   \n\t  ';
-            const { instructions } = compiler.compile(template);
+            const { instructions } = Compiler.compile(template);
 
             expect(instructions).toHaveLength(1);
             expect(instructions[0]).toMatchObject({

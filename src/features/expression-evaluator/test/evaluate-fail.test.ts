@@ -1,9 +1,9 @@
+import { expectAPTLFail } from '@/test';
 import type { ExpressionArgs } from '../types/hooks';
 import {
     evaluate,
     evaluateAndIterate,
     evaluateAndStringify,
-    expectCBFFail,
     getThrownError,
 } from './utils';
 import { APTLErrorType } from '@/errors';
@@ -25,33 +25,37 @@ describe('evaluate error', () => {
         } as IdentifierExpression;
     }
 
-    test('IDENTIFIER_RESOLVE_FAIL : var', () => {
+    test('IDENTIFIER_RESOLVE_FAIL: var', () => {
         const e = getThrownError(()=>evaluate('num', EMPTY_ARGS))
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.IDENTIFIER_RESOLVE_FAIL,
             {
+                error_type: APTLErrorType.IDENTIFIER_RESOLVE_FAIL,
                 text : 'num',
-                positionBegin : 0,
-                positionEnd : 3,
+                position: {
+                    begin: 0,
+                    end: 3,
+                }
             }
         );
     });
     
-    test('IDENTIFIER_RESOLVE_FAIL : built-in var', () => {
+    test('IDENTIFIER_RESOLVE_FAIL: built-in var', () => {
         const e = getThrownError(()=>evaluate(':chat', EMPTY_ARGS))
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.IDENTIFIER_RESOLVE_FAIL,
             {
+                error_type: APTLErrorType.IDENTIFIER_RESOLVE_FAIL,
                 text : ':chat',
-                positionBegin : 0,
-                positionEnd : 5,
+                position: {
+                    begin: 0,
+                    end: 5,
+                }
             }
         );
     });
 
-    test('NO_HOOK : call', () => {
+    test('NO_HOOK: call', () => {
         const args = {
             ...EMPTY_ARGS,
             vars : {
@@ -65,13 +69,15 @@ describe('evaluate error', () => {
         };
         
         const e = getThrownError(()=>evaluate('num()', args));
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.NO_HOOK,
             {
+                error_type: APTLErrorType.NO_HOOK,
                 text : '()',
-                positionBegin : 0,
-                positionEnd : 5,
+                position: {
+                    begin: 0,
+                    end: 5,
+                }
             }
         );
     });
@@ -90,13 +96,16 @@ describe('evaluate error', () => {
         };
 
         const e = getThrownError(()=>evaluateAndStringify('num', args))
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.NO_HOOK,
+            
             {
+                error_type: APTLErrorType.NO_HOOK,
                 text : args.vars.num.toString(),
-                positionBegin : 0,
-                positionEnd : 3,
+                position: {
+                    begin: 0,
+                    end: 3,
+                }
             }
         );
     });
@@ -105,13 +114,15 @@ describe('evaluate error', () => {
     // 지원하지 않는 연산자는 NO_HOOK대신 OPERATOR_NOT_SUPPORTED 예외를 발생시킴
     test('OPERATOR_NOT_SUPPORTED : literal iterate', () => {
         const e = getThrownError(()=>evaluateAndIterate('5', EMPTY_ARGS))
-        expectCBFFail(
+        expectAPTLFail(
             e,
-            APTLErrorType.OPERATOR_NOT_SUPPORTED,
             {
+                error_type: APTLErrorType.OPERATOR_NOT_SUPPORTED,
                 text : '5',
-                positionBegin : 0,
-                positionEnd : 1,
+                position: {
+                    begin: 0,
+                    end: 1,
+                }
             }
         );
     });

@@ -1,6 +1,6 @@
 {
-  "name": "@hve/prompt-template",
-  "version": "0.3.0",
+  "name": "advanced-prompt-template-lang",
+  "version": "1.0.0",
   "main": "./dist/bundle.cjs",
   "module": "./dist/bundle.mjs",
   "types": "./dist/index.d.ts",

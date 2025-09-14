@@ -3,8 +3,7 @@ import { DirectiveFragment, ExpressionFragment } from '@/types/fragment';
 import { InstructionType } from '@/types/instruction';
 import { ActionCmd, ActionInstructions } from '@/types/instruction/actions';
 import ExpressionBuilder from './ExpressionBuilder';
-import { APTLErrorType } from '@/errors';
-import { APTLBuildError } from '@/errors';
+import { APTLErrorType, FragmentError } from '@/errors';
 
 class ActionTemplate {
     static enterScope(): ActionInstructions {
@@ -35,8 +34,8 @@ class ActionTemplate {
     static jumpConditional(fragment: DirectiveFragment, jumpTo: number): ActionInstructions {
         const directive = fragment.directive.text.toLowerCase();
         if (directive !== 'if' && directive !== 'elseif') {
-            throw new APTLBuildError(
-                `Use 'if' or 'elseif' directive with condition expression`,
+            throw new FragmentError(
+                `Use '#if' or '#elseif' directive with condition expression`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 fragment
             );

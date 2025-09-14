@@ -1,4 +1,4 @@
-import { APTLErrorType } from '../APTLErrorType';
+import { APTLErrorType } from '../types';
 
 import APTLEvaluateFail, { FailExpression } from './APTLEvaluateFail';
 

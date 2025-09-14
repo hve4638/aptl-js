@@ -1,12 +1,12 @@
-import { APTLInstruction, InstructionCmd, InstructionType } from '@/types/instruction';
+import { InstructionCmd, InstructionType } from '@/types/instruction';
 
 import StackControl from './StackControl';
-import { ActionCmd, ActionInstructions } from '@/types/instruction/actions';
-import { DirectiveKeywords } from '@/types/fragment';
 import Evaluator from '@/features/expression-evaluator';
 
 import { ExecuteArgs } from './types';
-import { CompileResult } from '@/types/compile';
+import { TemplateOutput, CompileOutput } from '@/types';
+import { ActionCmd, ActionInstructions } from '@/types/instruction/actions';
+import { DirectiveKeywords } from '@/types/fragment';
 
 
 type ProcessResult = {
@@ -17,12 +17,12 @@ class InstructionExecutor {
     #stackControl: StackControl;
     #executeArgs: ExecuteArgs;
 
-    static execute(CompileResult: CompileResult, executeArgs: ExecuteArgs) {
-        const executor = new InstructionExecutor(CompileResult, executeArgs);
+    static execute(CompileOutput: CompileOutput, executeArgs: ExecuteArgs) {
+        const executor = new InstructionExecutor(CompileOutput, executeArgs);
         return executor.execute();
     }
 
-    private constructor({ instructions }: CompileResult, executeArgs: ExecuteArgs) {
+    private constructor({ instructions }: CompileOutput, executeArgs: ExecuteArgs) {
         this.#stackControl = new StackControl(instructions);
         this.#executeArgs = executeArgs;
     }
@@ -36,7 +36,7 @@ class InstructionExecutor {
         });
     }
 
-    *execute() {
+    *execute(): Generator<TemplateOutput> {
         const sc = this.#stackControl;
 
         // offset을 이동시키며 순차적으로 처리
@@ -94,6 +94,7 @@ class InstructionExecutor {
                         }
                     }
                     else {
+                        // PromptGenerator의 경우
                         for (const result of output) {
                             yield result;
                         }

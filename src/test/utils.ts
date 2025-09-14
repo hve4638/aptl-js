@@ -1,4 +1,5 @@
-import { APTLFail, APTLFailHint, APTLErrorType } from '@/errors';
+import { BuildError, APTLErrorType } from '@/errors';
+import { CompileFailReason } from '@/types/fail';
 
 export function getThrownError(callback: () => any) {
     try {
@@ -9,26 +10,15 @@ export function getThrownError(callback: () => any) {
     throw new Error('Expected error but no error was thrown');
 }
 
-export function expectCBFFail(
+export function expectAPTLFail(
     actualError: unknown,
-    failType: APTLErrorType,
-    hint: APTLFailHint
+    compileFail: CompileFailReason,
 ) {
-    expect(actualError).toBeInstanceOf(APTLFail);
-    if (actualError instanceof APTLFail) {
-        const actual = {
-            text: actualError.text,
-            type: actualError.type,
-            positionBegin: actualError.positionBegin,
-            positionEnd: actualError.positionEnd,
-        }
-        const expected = {
-            type: failType,
-            text: hint.text,
-            positionBegin: hint.positionBegin,
-            positionEnd: hint.positionEnd,
-        }
-        expect(actual).toEqual(expected);
+    expect(actualError).toBeInstanceOf(BuildError);
+    if (actualError instanceof BuildError) {
+        const actual = actualError.reason;
+        
+        expect(actual).toEqual(compileFail);
     }
 }
 

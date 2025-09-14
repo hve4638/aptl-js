@@ -1,8 +1,8 @@
-import { APTLFail } from '@/errors';
 import { APTLInstruction } from '@/types/instruction';
+import { CompileFailReason } from './fail';
 
-export type CompileResult = {
+export type CompileOutput = {
     ok: boolean;
     instructions: APTLInstruction[];
-    errors: APTLFail[];
+    errors: CompileFailReason[];
 }
