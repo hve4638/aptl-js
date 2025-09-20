@@ -154,6 +154,7 @@ class Evaluator {
                 throw new IdentifierResolveFail(`Variable is not defined '${identifier}'`, expr);
             }
         }
+        
         switch (typeof data) {
             case 'string':
             case 'number':
@@ -165,6 +166,12 @@ class Evaluator {
                     size: expr.size
                 };
             case 'object':
+                return {
+                    type: ExpressionType.OBJECT,
+                    value: data,
+                    position: expr.position,
+                    size: expr.size,
+                }
             case 'function':
                 {
                     const hookName = OPERATOR_HOOKS.OBJECTIFY;

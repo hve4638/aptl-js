@@ -1,11 +1,11 @@
 import { BuildError } from '@/errors';
 import Fragmenter from '@/features/fragmenter';
 import { ForeachSequenceBuilder, IfSequenceBuilder, InstructionBuilder } from '@/features/instruction-builder';
-import { CompileOutput } from '@/types/compile';
-import { CompileFailReason } from '@/types/fail';
 
 import { DirectiveKeywords, Fragment } from '@/types/fragment';
 import { APTLInstruction } from '@/types/instruction';
+import { CompileFailReason } from '@/types/fail';
+import { CompileOutput } from '@/types/compile';
 
 class Compiler {
     static #initialized = false;
@@ -19,11 +19,19 @@ class Compiler {
         this.#instructionBuilder.updateDirectiveHandlers({
             [DirectiveKeywords.If]: (c, gen) => {
                 const ifSeqBuilder = new IfSequenceBuilder(c, gen, this.#instructionBuilder);
-                return ifSeqBuilder.build();
+                return ifSeqBuilder.build({ inline: false });
+            },
+            [DirectiveKeywords.IfInline]: (c, gen) => {
+                const ifSeqBuilder = new IfSequenceBuilder(c, gen, this.#instructionBuilder);
+                return ifSeqBuilder.build({ inline: true });
             },
             [DirectiveKeywords.Foreach]: (c, gen) => {
                 const foreachSeqBuilder = new ForeachSequenceBuilder(c, gen, this.#instructionBuilder);
-                return foreachSeqBuilder.build();
+                return foreachSeqBuilder.build({ inline: false });
+            },
+            [DirectiveKeywords.ForeachInline]: (c, gen) => {
+                const foreachSeqBuilder = new ForeachSequenceBuilder(c, gen, this.#instructionBuilder);
+                return foreachSeqBuilder.build({ inline: true });
             },
         });
     }
@@ -58,6 +66,7 @@ class Compiler {
 
             try {
                 const inst = Compiler.#instructionBuilder.build(fragment, gen, {});
+                
                 if (inst) instructions.push(inst);
             }
             catch (error) {

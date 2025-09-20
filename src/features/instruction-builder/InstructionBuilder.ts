@@ -32,6 +32,8 @@ class InstructionBuilder implements IInstructionBuilder {
                 return this.#makeExpressionInstruction(current);
             case 'directive-element':
                 return this.#parseDirective(current, fragmentGen, priorityDirectiveHandlers);
+            case 'whitespace':
+                return null;
             default:
                 throw new Error(`Unsupported fragment type: ${(current as any).type}`);
         }
@@ -67,7 +69,7 @@ class InstructionBuilder implements IInstructionBuilder {
         gen: Generator<Fragment>,
         priorityHandlers?: DirectiveHandlers,
     ): APTLInstruction | null {
-        const keyword = current.directive.text.toLowerCase();
+        const keyword = current.directive.value;
         
         if (priorityHandlers && keyword in priorityHandlers) {
             const parser = priorityHandlers[keyword];
@@ -79,7 +81,7 @@ class InstructionBuilder implements IInstructionBuilder {
         }
         else {
             throw new FragmentError(
-                `Invalid directive '${keyword}'`,
+                `Unexpected directive '${keyword}'`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 current
             );

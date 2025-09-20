@@ -10,6 +10,7 @@ export const InstructionCmd = {
     Directive: 'directive',
     Expression: 'expression',
     Text: 'text',
+    Newline: 'newline',
 } as const;
 export type InstructionCmd = typeof InstructionType[keyof typeof InstructionType];
 

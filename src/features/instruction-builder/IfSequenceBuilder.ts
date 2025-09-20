@@ -1,9 +1,9 @@
 import { DirectiveFragment, DirectiveKeywords, Fragment } from '@/types/fragment';
-import { APTLInstruction, GroupInstruction, InstructionType } from '@/types/instruction';
+import { APTLInstruction, GroupInstruction, InstructionCmd, InstructionType } from '@/types/instruction';
 import { IInstructionBuilder } from './interfaces';
 import { FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
-import ActionTemplate from './ActionTemplate';
+import ActionTemplate, { nl } from './utils';
 import { DirectiveHandlers } from './types';
 
 type ConditionalBlock = {
@@ -43,7 +43,7 @@ class IfSequenceBuilder {
         this.#addCondition(current);
     }
 
-    build(): GroupInstruction {
+    build({ inline }: { inline: boolean }): GroupInstruction {
         // #endif를 만날 때까지 Fragment를 처리
         while (!this.#exitSignal) {
             const { value: fragment, done } = this.#fragmentGen.next();
@@ -65,9 +65,14 @@ class IfSequenceBuilder {
             }
         }
 
+        return this.#parseIfCondition(inline);
+    }
+
+    #parseIfCondition(inline: boolean): GroupInstruction {
+        const blockSize = inline ? 2 : 4;
         const jumpSectionSize = this.#conditions.length;
-        const elseSectionSize = this.#elseCondition ? 2 : 1;
-        const totalSize = jumpSectionSize + elseSectionSize + this.#conditions.length * 2;
+        const elseSectionSize = this.#elseCondition ? blockSize : 1;
+        const totalSize = jumpSectionSize + elseSectionSize + this.#conditions.length * blockSize;
         const conditionSectionPosition = jumpSectionSize + elseSectionSize;
 
         const group: GroupInstruction = {
@@ -81,19 +86,34 @@ class IfSequenceBuilder {
             const condition = this.#conditions[index];
             const jumpPosition = conditionSectionPosition + 2 * Number(index);
 
-            const jumpAction = ActionTemplate.jumpConditional(condition.fragment, jumpPosition)
-
+            const jumpAction = ActionTemplate.jumpConditional(condition.fragment, jumpPosition);
             group.instructions[index] = jumpAction;
-            group.instructions[jumpPosition] = condition.instruction;
-            group.instructions[jumpPosition + 1] = ActionTemplate.break();
+
+            if (inline) {
+                group.instructions[jumpPosition] = condition.instruction;
+                group.instructions[jumpPosition + 1] = ActionTemplate.break();
+            }
+            else {
+                group.instructions[jumpPosition] = nl();
+                group.instructions[jumpPosition + 1] = condition.instruction;
+                group.instructions[jumpPosition + 2] = nl();
+                group.instructions[jumpPosition + 3] = ActionTemplate.break();
+            }
         }
 
         // #else 블록 처리
         const elseSectionPosition = jumpSectionSize;
         if (this.#elseCondition) {
-            group.instructions[elseSectionPosition] = this.#elseCondition.instruction;
-            group.instructions[elseSectionPosition + 1] = ActionTemplate.break();
-
+            if (inline) {
+                group.instructions[elseSectionPosition] = this.#elseCondition.instruction;
+                group.instructions[elseSectionPosition + 1] = ActionTemplate.break();
+            }
+            else {
+                group.instructions[elseSectionPosition] = nl();
+                group.instructions[elseSectionPosition + 1] = this.#elseCondition.instruction;
+                group.instructions[elseSectionPosition + 2] = nl();
+                group.instructions[elseSectionPosition + 3] = ActionTemplate.break();
+            }
         }
         else {
             group.instructions[elseSectionPosition] = ActionTemplate.break();
@@ -102,6 +122,7 @@ class IfSequenceBuilder {
         return group;
     }
 
+    /** 각 조건 블럭(if, elseif)을 저장 */
     #addCondition(fragment: DirectiveFragment) {
         const condition = {
             fragment: fragment,
@@ -114,6 +135,7 @@ class IfSequenceBuilder {
         this.#conditions.push(condition);
     }
 
+    /** 현재 조건 블럭에 명령어 추가 */
     #addInstructionToCurrentCondition(instruction: APTLInstruction) {
         if (this.#elseCondition) {
             this.#elseCondition.instruction.instructions.push(instruction);
@@ -127,7 +149,7 @@ class IfSequenceBuilder {
     #handleElseIf(fragment: DirectiveFragment) {
         if (this.#elseCondition) {
             throw new FragmentError(
-                `Unexpected '${fragment.directive}' directive after 'else' directive`,
+                `Unexpected '${fragment.directive}' directive after '#else' directive`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 fragment
             )

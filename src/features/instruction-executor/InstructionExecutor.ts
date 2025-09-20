@@ -39,6 +39,9 @@ class InstructionExecutor {
     *execute(): Generator<TemplateOutput> {
         const sc = this.#stackControl;
 
+        // 연속된 개행문자 방지용
+        let lastOutputWasNL = false;
+
         // offset을 이동시키며 순차적으로 처리
         // SequenceNode를 만나면 처리 스택에 추가. 새 스택에서 offset 0으로 시작
         // continue 는 offset을 증가시키지 않기 위한 용도
@@ -88,6 +91,7 @@ class InstructionExecutor {
                     const output = evaluator.evaluateOutput(inst.expression);
 
                     if (typeof output === 'string') {
+                        lastOutputWasNL = false;
                         yield {
                             type: 'TEXT',
                             text: output,
@@ -96,21 +100,32 @@ class InstructionExecutor {
                     else {
                         // PromptGenerator의 경우
                         for (const result of output) {
+                            if (result.type === 'TEXT') lastOutputWasNL = false;
                             yield result;
                         }
                     }
                 }
                 else if (inst.cmd === InstructionCmd.Text) {
+                    lastOutputWasNL = false;
                     yield {
                         type: 'TEXT',
                         text: inst.text,
+                    };
+                }
+                else if (inst.cmd === InstructionCmd.Newline && !lastOutputWasNL) {
+                    // 중복 개행 방지
+                    // {{#if}} ... {{#endif}} {{#if}} ... 같이 지시문이 연속으로 오는 경우 처리
+                    lastOutputWasNL = true;
+                    yield {
+                        type: 'TEXT',
+                        text: '\n',
                     };
                 }
             }
 
             sc.nextOffset();
         }
-    }
+    } 
 
     #processActionInstruction(inst: ActionInstructions): ProcessResult {
         const sc = this.#stackControl;

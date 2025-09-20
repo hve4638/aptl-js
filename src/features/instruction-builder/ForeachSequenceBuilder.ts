@@ -3,7 +3,7 @@ import { APTLInstruction, GroupInstruction, InstructionType } from '@/types/inst
 import { IInstructionBuilder } from './interfaces';
 import { FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
-import ActionTemplate from './ActionTemplate';
+import ActionTemplate, { nl } from './utils';
 import ExpressionBuilder from './ExpressionBuilder';
 import { StringUtils } from '@/utils';
 
@@ -35,7 +35,7 @@ class ForeachSequenceBuilder {
         this.#instBuilder = instructionBuilder;
     }
 
-    build(): GroupInstruction {
+    build({ inline }: { inline: boolean }): GroupInstruction {
         const {
             iterator,
             element,
@@ -68,18 +68,36 @@ class ForeachSequenceBuilder {
             }
         }
 
-        return {
-            instruction_type: InstructionType.Group,
-            instructions: [
-                ActionTemplate.enterScope(),
-                ActionTemplate.iterateInit(iterator.expression, iterator.text),
-                ActionTemplate.iterateNext(iterator.text, element.text),
-                ActionTemplate.jumpIfIterateDone(iterator.text, 6),
-                instruction,
-                ActionTemplate.jump(2),
-                ActionTemplate.exitScope(),
-            ],
-        } satisfies GroupInstruction;
+        if (inline) {
+            return {
+                instruction_type: InstructionType.Group,
+                instructions: [
+                    ActionTemplate.enterScope(),
+                    ActionTemplate.iterateInit(iterator.expression, iterator.text),
+                    ActionTemplate.iterateNext(iterator.text, element.text),
+                    ActionTemplate.jumpIfIterateDone(iterator.text, 6),
+                    instruction,
+                    ActionTemplate.jump(2),
+                    ActionTemplate.exitScope(),
+                ],
+            } satisfies GroupInstruction;
+        }
+        else {
+            return {
+                instruction_type: InstructionType.Group,
+                instructions: [
+                    ActionTemplate.enterScope(),
+                    ActionTemplate.iterateInit(iterator.expression, iterator.text),
+                    ActionTemplate.iterateNext(iterator.text, element.text),
+                    ActionTemplate.jumpIfIterateDone(iterator.text, 8),
+                    nl(),
+                    instruction,
+                    nl(),
+                    ActionTemplate.jump(2),
+                    ActionTemplate.exitScope(),
+                ],
+            } satisfies GroupInstruction;
+        }
     }
 
     #parseForeachField() {

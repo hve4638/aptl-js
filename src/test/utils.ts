@@ -1,4 +1,6 @@
+import APTL from '@/APTL';
 import { BuildError, APTLErrorType } from '@/errors';
+import { TemplateOutput } from '@/types';
 import { CompileFailReason } from '@/types/fail';
 
 export function getThrownError(callback: () => any) {
@@ -17,12 +19,7 @@ export function expectAPTLFail(
     expect(actualError).toBeInstanceOf(BuildError);
     if (actualError instanceof BuildError) {
         const actual = actualError.reason;
-        
+
         expect(actual).toEqual(compileFail);
     }
 }
-
-export type PromptResult = {
-    role: string;
-    children: string[];
-};

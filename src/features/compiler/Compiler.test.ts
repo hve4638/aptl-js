@@ -97,11 +97,7 @@ describe('Compiler', () => {
             const template = '   \n\t  ';
             const { instructions } = Compiler.compile(template);
 
-            expect(instructions).toHaveLength(1);
-            expect(instructions[0]).toMatchObject({
-                instruction_type: InstructionType.Single,
-                cmd: InstructionCmd.Text
-            });
+            expect(instructions).toHaveLength(0);
         });
     });
 });

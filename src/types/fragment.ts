@@ -1,7 +1,11 @@
 interface BaseFragment {
-    type: 'text-content' | 'expression-element' | 'directive-element';
+    type: 'whitespace' | 'text-content' | 'expression-element' | 'directive-element';
     value: string;
     position: number;
+}
+
+export interface WhitespaceFragment extends BaseFragment {
+    type: 'whitespace';
 }
 
 export interface TextContentFragment extends BaseFragment {
@@ -24,6 +28,8 @@ export interface DirectiveFragment extends BaseFragment {
     type: 'directive-element';
 
     directive: {
+        value: string;
+        
         text: string;
         prefix: string;
         suffix: string;
@@ -39,8 +45,10 @@ export interface DirectiveFragment extends BaseFragment {
     };
 }
 
-export type Fragment = TextContentFragment | ExpressionFragment | DirectiveFragment;
+export type Fragment = WhitespaceFragment | TextContentFragment | ExpressionFragment | DirectiveFragment;
 
+
+// 반드시 소문자로 표기
 export const DirectiveKeywords = {
     Role: 'role',
     If: 'if',
@@ -48,8 +56,12 @@ export const DirectiveKeywords = {
     Elif: 'elif',
     Else: 'else',
     EndIf: 'endif',
+
     Foreach: 'foreach',
     EndForeach: 'endforeach',
+
+    IfInline: 'if_inline',
+    ForeachInline: 'foreach_inline',
     Split: 'split',
 } as const;
 export type DirectiveKeywords = typeof DirectiveKeywords[keyof typeof DirectiveKeywords];

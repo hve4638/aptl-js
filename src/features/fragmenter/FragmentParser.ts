@@ -36,6 +36,7 @@ export class FragmentParser {
                     position,
 
                     directive: {
+                        value: directive.text.toLowerCase(),
                         text: directive.text,
                         prefix: directive.prefix,
                         suffix: directive.suffix,

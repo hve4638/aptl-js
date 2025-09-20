@@ -1,6 +1,6 @@
 {
   "name": "advanced-prompt-template-lang",
-  "version": "1.0.0",
+  "version": "0.10.0",
   "main": "./dist/bundle.cjs",
   "module": "./dist/bundle.mjs",
   "types": "./dist/index.d.ts",

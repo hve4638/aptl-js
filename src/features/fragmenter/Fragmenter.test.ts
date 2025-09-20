@@ -1,12 +1,35 @@
 import Fragmenter from './Fragmenter';
-import { DirectiveFragment, ExpressionFragment, TextContentFragment } from '@/types/fragment';
+import { DirectiveFragment, ExpressionFragment, Fragment, TextContentFragment } from '@/types/fragment';
 
 describe('Fragmenter', () => {
     describe('fragment', () => {
+        test('텍스트 좌우 공백 제거', () => {
+            const template = '  Hello, world! ';
+            const actual = Fragmenter.fragment(template);
+            const expected: Fragment[] = [
+                {
+                    type: 'whitespace',
+                    value: '  ',
+                    position: 0,
+                },
+                {
+                    type: 'text-content',
+                    value: 'Hello, world!',
+                    position: 2,
+                },
+                {
+                    type: 'whitespace',
+                    value: ' ',
+                    position: '  Hello, world!'.length,
+                },
+            ]
+            expect(actual).toEqual(expected);
+        });
+
         test('순수 텍스트 템플릿 파싱', () => {
             const template = 'Hello, world!';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(1);
             expect(result[0]).toEqual({
                 type: 'text-content',
@@ -18,7 +41,7 @@ describe('Fragmenter', () => {
         test('단일 expression 템플릿 파싱', () => {
             const template = '{{name}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(1);
             expect(result[0]).toEqual({
                 type: 'expression-element',
@@ -36,13 +59,14 @@ describe('Fragmenter', () => {
         test('단일 directive 템플릿 파싱', () => {
             const template = '{{#if condition}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(1);
             expect(result[0]).toEqual({
                 type: 'directive-element',
                 value: '{{#if condition}}',
                 position: 0,
                 directive: {
+                    value: 'if',
                     text: 'if',
                     prefix: '{{#',
                     suffix: ' condition}}',
@@ -60,23 +84,29 @@ describe('Fragmenter', () => {
         test('빈 템플릿 처리', () => {
             const template = '';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(0);
         });
 
         test('공백만 있는 템플릿 처리', () => {
             const template = '   \n\t  ';
-            const result = Fragmenter.fragment(template);
-
-            expect(result.length).toBeGreaterThanOrEqual(0);
+            const actaul = Fragmenter.fragment(template);
+            const expected: Fragment[] = [
+                {
+                    type: 'whitespace',
+                    value: '   \n\t  ',
+                    position: 0,
+                },
+            ]
+            expect(actaul).toEqual(expected);
         });
     });
-    
+
     describe('fragment: 혼합', () => {
         test('혼합 템플릿 파싱 - 텍스트와 표현식', () => {
             const template = 'Hello {{name}}, welcome!';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(3);
             expect(result[0]).toEqual({
                 type: 'text-content',
@@ -104,28 +134,28 @@ describe('Fragmenter', () => {
         test('혼합 템플릿 파싱 - 텍스트, 표현식, directive', () => {
             const template = 'Hello {{name}}! {{#if hasMessage}}Message: {{message}}{{#endif}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(7);
-            
+
             // 텍스트
             expect(result[0].type).toBe('text-content');
             expect(result[0].value).toBe('Hello ');
-            
+
             // 표현식
             expect(result[1].type).toBe('expression-element');
             expect(result[1].value).toBe('{{name}}');
-            
+
             // 텍스트
             expect(result[2].type).toBe('text-content');
             expect(result[2].value).toBe('!');
-            
+
             // directive (if)
             expect(result[3].type).toBe('directive-element');
             expect(result[3].value).toBe(' {{#if hasMessage}}');
-            
+
             expect(result[4].type).toBe('text-content');
             expect(result[4].value).toBe('Message: ');
-            
+
             // 표현식
             expect(result[5].type).toBe('expression-element');
             expect(result[5].value).toBe('{{message}}');
@@ -134,7 +164,7 @@ describe('Fragmenter', () => {
         test('복잡한 표현식이 포함된 템플릿', () => {
             const template = 'Total: {{price * quantity + tax}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(2);
             expect(result[1]).toEqual({
                 type: 'expression-element',
@@ -152,18 +182,18 @@ describe('Fragmenter', () => {
         test('foreach directive가 포함된 템플릿', () => {
             const template = '{{#foreach item in items}}{{item.name}}{{#endforeach}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(3);
-            
+
             // foreach directive
             expect(result[0].type).toBe('directive-element');
             expect((result[0] as DirectiveFragment).directive.text).toBe('foreach');
             expect((result[0] as DirectiveFragment).field.text).toBe('item in items');
-            
+
             // 표현식
             expect(result[1].type).toBe('expression-element');
             expect(result[1].value).toBe('{{item.name}}');
-            
+
             // endforeach directive
             expect(result[2].type).toBe('directive-element');
             expect((result[2] as DirectiveFragment).directive.text).toBe('endforeach');
@@ -172,7 +202,7 @@ describe('Fragmenter', () => {
         test('레거시 directive 형식 처리', () => {
             const template = '{{:: if condition}}content{{:: endif}}';
             const result = Fragmenter.fragment(template);
-            
+
             expect(result).toHaveLength(3);
             expect(result[0].type).toBe('directive-element');
             expect((result[0] as DirectiveFragment).directive.text).toBe('if');
@@ -185,11 +215,11 @@ describe('Fragmenter', () => {
         test('공백이 포함된 템플릿 - WhitespaceHandler 동작 확인', () => {
             const template = '  {{#if condition}}  content  {{#endif}}  ';
             const result = Fragmenter.fragment(template);
-            
+
             // WhitespaceHandler가 공백을 처리하고 빈 블록을 필터링
             const textBlocks = result.filter(block => block.type === 'text-content');
             const directiveBlocks = result.filter(block => block.type === 'directive-element');
-            
+
             expect(textBlocks.length).toBeGreaterThan(0);
             expect(directiveBlocks.length).toBe(2);
         });
@@ -203,13 +233,13 @@ describe('Fragmenter', () => {
                 {{#endif}}
             {{#endif}}
             `.trim();
-            
+
             const result = Fragmenter.fragment(template);
-            
+
             // directive와 expression이 적절히 파싱되는지 확인
             const directives = result.filter(block => block.type === 'directive-element');
             const expressions = result.filter(block => block.type === 'expression-element');
-            
+
             expect(directives.length).toBe(4); // if, if, endif, endif
             expect(expressions.length).toBe(2); // user.name, user.messageCount
         });

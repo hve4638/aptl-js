@@ -3,12 +3,14 @@ import { ActionInstructions } from './actions';
 import { DirectiveInstructions } from './directive';
 import { ExpressionInstruction } from './expression';
 import { TextContentInstruction } from './text';
+import { NewlineInstruction } from './newline';
 
 export type APTLInstruction = (
     ActionInstructions
     | DirectiveInstructions
     | ExpressionInstruction
     | TextContentInstruction
+    | NewlineInstruction
     | GroupInstruction
 )
 

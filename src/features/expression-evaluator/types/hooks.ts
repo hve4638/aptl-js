@@ -9,39 +9,39 @@ type ComparisonResult = LiteralExpression | boolean;
 
 export type ExpressionEventHooks = {
     /** a + b */
-    'add': (a: unknown, b: unknown) => AnyResult;
+    'add': (a: any, b: any) => AnyResult;
     /** a - b */
-    'subtract': (a: unknown, b: unknown) => AnyResult;
+    'subtract': (a: any, b: any) => AnyResult;
     /** a * b */
-    'multiply': (a: unknown, b: unknown) => AnyResult;
+    'multiply': (a: any, b: any) => AnyResult;
     /** a / b */
-    'divide': (a: unknown, b: unknown) => AnyResult;
+    'divide': (a: any, b: any) => AnyResult;
     /** a % b */
-    'modulo': (a: unknown, b: unknown) => AnyResult;
+    'modulo': (a: any, b: any) => AnyResult;
 
     /** a >= b */
-    'greaterOrEqual': (a: unknown, b: unknown) => ComparisonResult;
+    'greaterOrEqual': (a: any, b: any) => ComparisonResult;
     /** a <= b */
-    'lessOrEqual': (a: unknown, b: unknown) => ComparisonResult;
+    'lessOrEqual': (a: any, b: any) => ComparisonResult;
     /** a > b */
-    'greater': (a: unknown, b: unknown) => ComparisonResult;
+    'greater': (a: any, b: any) => ComparisonResult;
     /** a < b */
-    'less': (a: unknown, b: unknown) => ComparisonResult;
+    'less': (a: any, b: any) => ComparisonResult;
     /** a != b */
-    'notEqual': (a: unknown, b: unknown) => ComparisonResult;
+    'notEqual': (a: any, b: any) => ComparisonResult;
     /** a == b */
-    'equal': (a: unknown, b: unknown) => ComparisonResult;
+    'equal': (a: any, b: any) => ComparisonResult;
     /** a && b */
-    'logicalAnd': (a: unknown, b: unknown) => ComparisonResult;
+    'logicalAnd': (a: any, b: any) => ComparisonResult;
     /** a || b */
-    'logicalOr': (a: unknown, b: unknown) => ComparisonResult;
+    'logicalOr': (a: any, b: any) => ComparisonResult;
 
     /** expr.index */
-    'access': (expr: unknown, field: any) => AnyResult;
+    'access': (expr: any, field: any) => AnyResult;
     /** a[b] */
-    'indexor': (expr: unknown, index: string | number) => AnyResult;
+    'indexor': (expr: any, index: string | number) => AnyResult;
     /** a(...b) */
-    'call': (expr: unknown, args: unknown[]) => AnyResult;
+    'call': (expr: any, args: any[]) => AnyResult;
 
     /**
      * number, string, boolean이 아닌 식별자에 대해 호출됨
@@ -54,8 +54,8 @@ export type ExpressionEventHooks = {
     /**
      * number, string, boolean이 아닌 값이 프롬프트에 반영될 때 호출됨
     */
-    'stringify': (expr: unknown) => string;
-    'iterate': (expr: unknown) => Iterator<unknown>;
+    'stringify': (expr: any) => string;
+    'iterate': (expr: any) => Iterator<unknown>;
 }
 
 export const OPERATOR_HOOKS = {

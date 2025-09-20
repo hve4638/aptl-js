@@ -12,3 +12,6 @@ dist/
 .npmrc
 .tsbuildinfo*
 .rollup.cache
+
+CLAUDE.md
+REPORT.md

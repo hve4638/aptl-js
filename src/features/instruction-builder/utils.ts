@@ -1,6 +1,6 @@
 import { EvaluatableExpression } from '@/types/expressions';
 import { DirectiveFragment, ExpressionFragment } from '@/types/fragment';
-import { InstructionType } from '@/types/instruction';
+import { InstructionCmd, InstructionType } from '@/types/instruction';
 import { ActionCmd, ActionInstructions } from '@/types/instruction/actions';
 import ExpressionBuilder from './ExpressionBuilder';
 import { APTLErrorType, FragmentError } from '@/errors';
@@ -33,14 +33,19 @@ class ActionTemplate {
     }
     static jumpConditional(fragment: DirectiveFragment, jumpTo: number): ActionInstructions {
         const directive = fragment.directive.text.toLowerCase();
-        if (directive !== 'if' && directive !== 'elseif') {
+        // @TODO: 하드코딩하는 대신 따로 분리해서 관리하는게 좋을 듯
+        if (
+            directive !== 'if'
+            && directive !== 'if_inline'
+            && directive !== 'elseif'
+        ) {
             throw new FragmentError(
                 `Use '#if' or '#elseif' directive with condition expression`,
                 APTLErrorType.INVALID_DIRECTIVE,
                 fragment
             );
         }
-        
+
         return {
             instruction_type: InstructionType.Action,
             cmd: ActionCmd.ConditionalJump,
@@ -78,6 +83,14 @@ class ActionTemplate {
             jump_to: jumpTo,
         };
     }
+}
+
+
+export function nl() {
+    return {
+        instruction_type: InstructionType.Single,
+        cmd: InstructionCmd.Newline,
+    };
 }
 
 export default ActionTemplate;
