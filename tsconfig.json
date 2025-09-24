@@ -21,9 +21,9 @@
 
         "importHelpers": true, /* Import emit helpers from 'tslib'. */
         "skipLibCheck": true, /* Skip type checking all .d.ts files. */
-        "declaration": true,
-        "declarationDir": "./dist",
-        "declarationMap": false,
+        // "declaration": true,
+        // "declarationDir": "./dist",
+        // "declarationMap": false,
 
         "outDir" : "./dist",
         "baseUrl": "./",
