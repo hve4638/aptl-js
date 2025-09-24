@@ -2,16 +2,6 @@
 
 A powerful TypeScript template engine designed for AI prompt generation with expression evaluation, conditional logic, and control flow directives.
 
-## Features
-
-- **Expression Evaluation**: Mathematical and logical operations with variable substitution
-- **Conditional Logic**: `IF/ELSE/ENDIF` directives for dynamic content
-- **Loops**: `FOREACH/ENDFOREACH` for iterating over arrays and objects
-- **Role-based Templates**: Built-in support for AI conversation roles
-- **Hook System**: External function integration during execution
-- **TypeScript Support**: Full type safety with comprehensive type definitions
-- **Generator-based Execution**: Memory-efficient streaming output
-
 ## Installation
 
 ```bash
@@ -51,7 +41,6 @@ APTL.format(output, {
 });
 
 console.log(messages);
-// Output:
 // [
 //   { role: 'system', content: ['You are a helpful AI assistant.'] },
 //   { role: 'user', content: ['What is 1 + 1?'] }
