@@ -1,11 +1,13 @@
+import { cSplit, cTrim } from 'contextual-trim';
+
 import { DirectiveFragment, DirectiveKeywords, Fragment } from '@/types/fragment';
 import { APTLInstruction, GroupInstruction, InstructionType } from '@/types/instruction';
-import { IInstructionBuilder } from './interfaces';
 import { FragmentError } from '@/errors';
 import { APTLErrorType } from '@/errors';
+
 import ActionTemplate, { nl } from './utils';
+import { IInstructionBuilder } from './interfaces';
 import ExpressionBuilder from './ExpressionBuilder';
-import { StringUtils } from '@/utils';
 
 class ForeachSequenceBuilder {
     #directiveHandler: Record<
@@ -133,7 +135,8 @@ class ForeachSequenceBuilder {
     #extractForeachField(delimiter: string = 'in'): { iterator: { text: string, position: number }, element: { text: string, position: number } } {
         const field = this.#current.field;
 
-        const splitted = StringUtils.split({
+        
+        const splitted = cSplit({
             value: field.text,
             left: field.prefix,
             right: field.suffix,
@@ -148,8 +151,8 @@ class ForeachSequenceBuilder {
         }
 
         const [elementRaw, iteratorRaw] = splitted;
-        const element = StringUtils.trim(elementRaw);
-        const iterator = StringUtils.trim(iteratorRaw);
+        const element = cTrim(elementRaw);
+        const iterator = cTrim(iteratorRaw);
 
         return {
             iterator: {

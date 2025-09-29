@@ -1,5 +1,5 @@
 import { DirectiveFragment, DirectiveKeywords, Fragment, TextContentFragment, WhitespaceFragment } from '@/types/fragment';
-import { StringUtils } from '@/utils';
+import { cTrimLeft, cTrimRight } from 'contextual-trim';
 
 const WS_OPEN = [
     DirectiveKeywords.If,
@@ -86,7 +86,7 @@ class WhitespaceHandler {
     }
 
     static #extractLeftWS(block: TextContentFragment): [WhitespaceFragment, TextContentFragment] | null {
-        const extracted = StringUtils.trimLeft({ value: block.value, left: '', right: '', position: block.position });
+        const extracted = cTrimLeft({ value: block.value, left: '', right: '', position: block.position });
 
         if (extracted.left.length === 0) return null;
 
@@ -104,7 +104,7 @@ class WhitespaceHandler {
     }
 
     static #extractRightWS(block: TextContentFragment): [TextContentFragment, WhitespaceFragment] | null {
-        const extracted = StringUtils.trimRight({ value: block.value, left: '', right: '', position: block.position });
+        const extracted = cTrimRight({ value: block.value, left: '', right: '', position: block.position });
 
         if (extracted.right.length === 0) return null;
 
