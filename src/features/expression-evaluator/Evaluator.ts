@@ -18,14 +18,14 @@ import {
 import { Vars } from '@/types';
 import PromptGenerator from '@/PromptGenerator/PromptGenerator';
 
-import { ExpressionArgs, ExpressionEventHooks, OPERATOR_HOOKS } from './types';
+import { ExpressionArgs, OperatorHooks, OPERATOR_HOOKS } from './types';
 import { LITERAL_ACTIONS } from './data';
 
 class Evaluator {
     #vars: Vars;
     #builtInVars: Vars;
     #scope: Vars;
-    #expressionEventHooks: Partial<ExpressionEventHooks>;
+    #expressionEventHooks: Partial<OperatorHooks>;
 
     constructor(args: ExpressionArgs) {
         const { expressionEventHooks, vars, builtInVars, scope } = args;

@@ -1,4 +1,4 @@
-import type { ExpressionArgs, ExpressionEventHooks } from '../types';
+import type { ExpressionArgs, OperatorHooks } from '../types';
 import {
     evaluate,
 } from './utils'
@@ -11,7 +11,7 @@ const EMPTY_ARGS = {
 } as ExpressionArgs;
 
 describe('Hook test', () => {
-    const hooks: Partial<ExpressionEventHooks> = {
+    const hooks: Partial<OperatorHooks> = {
         indexor(array, index) {
             if (Array.isArray(array)) {
                 return array[index];

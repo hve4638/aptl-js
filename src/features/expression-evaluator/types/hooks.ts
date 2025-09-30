@@ -7,7 +7,7 @@ import {
 type AnyResult = ObjectExpression | LiteralExpression | string | number | boolean;
 type ComparisonResult = LiteralExpression | boolean;
 
-export type ExpressionEventHooks = {
+export type OperatorHooks = {
     /** a + b */
     'add': (a: any, b: any) => AnyResult;
     /** a - b */
@@ -85,7 +85,7 @@ export type ExpressionArgs = {
     // 사용자 지정
     vars: Vars;
     builtInVars: Vars
-    expressionEventHooks: Partial<ExpressionEventHooks>;
+    expressionEventHooks: Partial<OperatorHooks>;
 
     scope?: Vars;
 }

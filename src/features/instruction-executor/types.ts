@@ -1,5 +1,5 @@
 import { Vars } from '@/types';
-import { ExpressionEventHooks } from '@/features/expression-evaluator';
+import { OperatorHooks } from '@/features/expression-evaluator';
 
 
 export type ExecuteArgs = {
@@ -14,5 +14,5 @@ export type ExecuteArgs = {
     /**
      * 템플릿 실행 중 호출할 수 있는 외부 함수(훅)
      */
-    hook: Partial<ExpressionEventHooks>;
+    hook: Partial<OperatorHooks>;
 }

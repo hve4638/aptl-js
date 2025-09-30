@@ -1,4 +1,4 @@
-import type { ExpressionArgs, ExpressionEventHooks } from '../types';
+import type { ExpressionArgs, OperatorHooks } from '../types';
 import {
     evaluate,
     evaluateAndIterate,
@@ -70,7 +70,7 @@ describe('Evaluate Test', () => {
 });
 
 describe('Iterate Test', () => {
-    const hooks: Partial<ExpressionEventHooks> = {
+    const hooks: Partial<OperatorHooks> = {
         indexor(array, index) {
             if (Array.isArray(array)) {
                 return array[index];

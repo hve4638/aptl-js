@@ -1,4 +1,4 @@
 import Evaluator from './Evaluator';
 
-export { type ExpressionEventHooks } from './types';
+export { type OperatorHooks } from './types';
 export default Evaluator;
