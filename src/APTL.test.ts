@@ -80,6 +80,38 @@ describe('APTL README Examples', () => {
 
             expect(actual).toEqual(expected);
         });
+
+        test('elseif branches', () => {
+            const template = '{{#if level == "critical"}}Priority: P0{{#elseif level == "high"}}Priority: P1{{#else}}Priority: P2{{#endif}}';
+
+            const result = APTL.run(template, {
+                vars: {
+                    level: 'high',
+                },
+                builtInVars: { nl: '\n' },
+                hook: {}
+            });
+            const actual = formatPrompt(result);
+
+            expect(actual[0].role).toBe('user');
+            expect(actual[0].text.join('').trim()).toBe('Priority: P1');
+        });
+
+        test('elif alias branches', () => {
+            const template = '{{#if lang == "en"}}Language: English{{#elif lang == "ko"}}Language: Korean{{#else}}Language: Unknown{{#endif}}';
+
+            const result = APTL.run(template, {
+                vars: {
+                    lang: 'ko',
+                },
+                builtInVars: { nl: '\n' },
+                hook: {}
+            });
+            const actual = formatPrompt(result);
+
+            expect(actual[0].role).toBe('user');
+            expect(actual[0].text.join('').trim()).toBe('Language: Korean');
+        });
     });
 
     describe('foreach', () => {

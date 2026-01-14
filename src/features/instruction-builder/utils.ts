@@ -38,6 +38,7 @@ class ActionTemplate {
             directive !== 'if'
             && directive !== 'if_inline'
             && directive !== 'elseif'
+            && directive !== 'elif'
         ) {
             throw new FragmentError(
                 `Use '#if' or '#elseif' directive with condition expression`,
